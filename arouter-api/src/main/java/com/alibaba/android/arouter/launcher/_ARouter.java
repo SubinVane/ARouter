@@ -348,6 +348,12 @@ final class _ARouter {
                 } else if (!(currentContext instanceof Activity)) {    // Non activity, need less one flag.
                     intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 }
+                
+                // Set Actions
+                String action=postcard.getAction();
+                if (!TextUtils.isEmpty(action)){
+                    intent.setAction(action);
+                }
 
                 // Navigation in main looper.
                 new Handler(Looper.getMainLooper()).post(new Runnable() {
@@ -359,7 +365,7 @@ final class _ARouter {
                             ActivityCompat.startActivity(currentContext, intent, postcard.getOptionsBundle());
                         }
 
-                        if ((0 != postcard.getEnterAnim() || 0 != postcard.getExitAnim()) && currentContext instanceof Activity) {    // Old version.
+                        if ((-1 != postcard.getEnterAnim() && -1 != postcard.getExitAnim()) && currentContext instanceof Activity) {    // Old version.
                             ((Activity) currentContext).overridePendingTransition(postcard.getEnterAnim(), postcard.getExitAnim());
                         }
 

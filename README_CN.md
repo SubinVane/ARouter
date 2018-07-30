@@ -4,19 +4,21 @@
     Android平台中对页面、服务提供路由功能的中间件，我的目标是 —— 简单且够用。
 ```
 
+[English](https://raw.githubusercontent.com/alibaba/ARouter/master/README.md)
+
 ##### [![Join the chat at https://gitter.im/alibaba/ARouter](https://badges.gitter.im/alibaba/ARouter.svg)](https://gitter.im/alibaba/ARouter?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge) [![Hex.pm](https://img.shields.io/hexpm/l/plug.svg)](https://www.apache.org/licenses/LICENSE-2.0)
 
 ---
 
 #### 最新版本
 
-模块|arouter-api|arouter-compiler|arouter-annotation
----|---|---|---
-最新版本|[![Download](https://api.bintray.com/packages/zhi1ong/maven/arouter-api/images/download.svg)](https://bintray.com/zhi1ong/maven/arouter-api/_latestVersion)|[![Download](https://api.bintray.com/packages/zhi1ong/maven/arouter-compiler/images/download.svg)](https://bintray.com/zhi1ong/maven/arouter-compiler/_latestVersion)|[![Download](https://api.bintray.com/packages/zhi1ong/maven/arouter-annotation/images/download.svg)](https://bintray.com/zhi1ong/maven/arouter-annotation/_latestVersion)
+模块|arouter-api|arouter-compiler|arouter-annotation|arouter-register
+---|---|---|---|---
+最新版本|[![Download](https://api.bintray.com/packages/zhi1ong/maven/arouter-api/images/download.svg)](https://bintray.com/zhi1ong/maven/arouter-api/_latestVersion)|[![Download](https://api.bintray.com/packages/zhi1ong/maven/arouter-compiler/images/download.svg)](https://bintray.com/zhi1ong/maven/arouter-compiler/_latestVersion)|[![Download](https://api.bintray.com/packages/zhi1ong/maven/arouter-annotation/images/download.svg)](https://bintray.com/zhi1ong/maven/arouter-annotation/_latestVersion)|[![Download](https://api.bintray.com/packages/zhi1ong/maven/arouter-register/images/download.svg)](https://bintray.com/zhi1ong/maven/arouter-register/_latestVersion)
 
 #### Demo展示
 
-##### [Demo apk下载](http://public.cdn.zhilong.me/app-debug.apk)、[Demo Gif](https://raw.githubusercontent.com/alibaba/ARouter/master/demo/arouter-demo.gif)
+##### [Demo apk下载](https://github.com/alibaba/ARouter/blob/develop/demo/arouter-demo.apk)、[Demo Gif](https://raw.githubusercontent.com/alibaba/ARouter/master/demo/arouter-demo.gif)
 
 #### 一、功能介绍
 1. **支持直接解析标准URL进行跳转，并自动注入参数到目标页面中**
@@ -31,6 +33,7 @@
 10. 支持多种方式配置转场动画
 11. 支持获取Fragment
 12. 完全支持Kotlin以及混编(配置见文末 其他#5)
+13. **支持第三方 App 加固**(使用 arouter-register 实现自动注册)
 
 #### 二、典型应用
 1. 从外部URL映射到内部页面，以及参数传递与解析
@@ -99,7 +102,31 @@ ARouter.getInstance().build("/test/1")
 ``` 
 -keep public class com.alibaba.android.arouter.routes.**{*;}
 -keep class * implements com.alibaba.android.arouter.facade.template.ISyringe{*;}
+
+# 如果使用了 byType 的方式获取 Service，需添加下面规则，保护接口
+-keep interface * implements com.alibaba.android.arouter.facade.template.IProvider
+
+# 如果使用了 单类注入，即不定义接口实现 IProvider，需添加下面规则，保护实现
+-keep class * implements com.alibaba.android.arouter.facade.template.IProvider
 ```
+
+6. 使用 Gradle 插件实现路由表的自动加载
+```gradle
+apply plugin: 'com.alibaba.arouter'
+
+buildscript {
+    repositories {
+        jcenter()
+    }
+
+    dependencies {
+        classpath "com.alibaba:arouter-register:1.0.0"
+    }
+}
+```
+可选使用，通过 ARouter 提供的注册插件进行路由表的自动加载，默认通过扫描 dex 的方式
+进行加载通过 gradle 插件进行自动注册可以缩短初始化时间解决应用加固导致无法直接访问
+dex 文件，初始化失败的问题，需要注意的是，该插件必须搭配 api 1.3.0 使用！
 
 #### 四、进阶用法
 1. 通过URL跳转
@@ -517,4 +544,22 @@ dependencies {
 
 1. 沟通和交流
 
-    ![qq](https://raw.githubusercontent.com/alibaba/ARouter/master/demo/arouter-qq-addr.png)
+    1. 交流群1 (已满，请加2群)
+    
+        ![qq](https://raw.githubusercontent.com/alibaba/ARouter/master/demo/arouter-qq-addr.png)
+
+    2. 交流群2
+        
+        ![qq](https://raw.githubusercontent.com/alibaba/ARouter/master/demo/qq-qrcode-2.JPG)
+
+#### 九、代码贡献 (排名不分先后，时间顺序)
+
+1. [imknown](https://github.com/alibaba/ARouter/commits?author=imknown) : 优化文档格式
+
+2. [crazy1235](https://github.com/crazy1235) : 自动注入支持优先使用默认值
+
+3. [luckybilly](https://github.com/luckybilly) : 通过 Transform API 实现路由表自动注册
+
+4. [LinXiaoTao](https://github.com/LinXiaoTao) : postcard transition support 0
+
+5. [tanglie1993](https://github.com/tanglie1993) : 修正拼写和语法错误
